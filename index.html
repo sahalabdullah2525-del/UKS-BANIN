@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UKS BANIN - Sistem Monitoring</title>
+    <!-- Chart.js untuk Grafik -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Remixicon untuk Ikon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: #e8f5e9; color: #333; padding: 15px; max-width: 480px; margin: 0 auto; }
+
+        /* Header */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .logo-box { display: flex; align-items: center; gap: 10px; }
+        .logo-icon { background: #1b5e20; color: white; padding: 8px; border-radius: 50%; font-size: 20px; }
+        .app-title h2 { font-size: 18px; color: #1b5e20; font-weight: bold; }
+        .app-title p { font-size: 11px; color: #666; letter-spacing: 1px; }
+        .user-profile { display: flex; align-items: center; gap: 8px; text-align: right; }
+        .user-info p { font-size: 13px; font-weight: bold; }
+        .user-info span { font-size: 10px; color: #666; }
+        .avatar { width: 35px; height: 35px; border-radius: 50%; background: #ccc; }
+
+        /* Card Section */
+        .card { background: white; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .card-title { font-weight: bold; font-size: 14px; color: #2e7d32; display: flex; align-items: center; gap: 6px; }
+        .select-date { border: 1px solid #ddd; padding: 4px 8px; border-radius: 12px; font-size: 12px; background: #fff; }
+
+        /* Counter Cards Grid */
+        .grid-status { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .status-box { border-radius: 16px; padding: 12px 8px; text-align: center; color: white; position: relative; }
+        .box-sakit { background: linear-gradient(135deg, #ff5252, #ff1744); }
+        .box-rehat { background: linear-gradient(135deg, #ffb74d, #ffa726); }
+        .box-masuk { background: linear-gradient(135deg, #26a69a, #00897b); }
+        .status-box span { font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px; }
+        .status-box h1 { font-size: 26px; margin-bottom: 5px; }
+        .icon-circle { background: rgba(255,255,255,0.2); width: 28px; height: 28px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
+
+        /* List Sering Periksa */
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .list-item:last-child { border-bottom: none; }
+        .item-left { display: flex; align-items: center; gap: 10px; }
+        .item-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
+        .icon-red { background: #ef5350; }
+        .icon-yellow { background: #ffee58; color: #333; }
+        .icon-grey { background: #b0bec5; }
+        .item-details h4 { font-size: 13px; font-weight: bold; }
+        .item-details p { font-size: 11px; color: #777; }
+        .badge-count { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; color: white; }
+        .bg-red { background: #ef5350; }
+        .bg-orange { background: #ffa726; }
+        .bg-grey { background: #78909c; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Profil -->
+    <header>
+        <div class="logo-box">
+            <div class="logo-icon"><i class="ri-health-book-fill"></i></div>
+            <div class="app-title">
+                <h2>UKS BANIN</h2>
+                <p>SISTEM MONITORING</p>
+            </div>
+        </div>
+        <div class="user-profile">
+            <div class="user-info">
+                <p>Ust. Sahal</p>
+                <span>ONLINE - Div. Kesehatan</span>
+            </div>
+            <div class="avatar"></div>
+        </div>
+    </header>
+
+    <!-- Grafik Statistik -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="ri-pie-chart-2-fill"></i> Statistik Data</div>
+            <select class="select-date"><option>Tgl Pilihan</option></select>
+        </div>
+        <canvas id="myChart" height="150"></canvas>
+    </div>
+
+    <!-- Indicator Cards -->
+    <div class="grid-status">
+        <div class="status-box box-sakit">
+            <span>SAKIT</span>
+            <h1>10</h1>
+            <div class="icon-circle"><i class="ri-stethoscope-line"></i></div>
+        </div>
+        <div class="status-box box-rehat">
+            <span>REHAT</span>
+            <h1>0</h1>
+            <div class="icon-circle"><i class="ri-home-4-line"></i></div>
+        </div>
+        <div class="status-box box-masuk">
+            <span>MASUK</span>
+            <h1>10</h1>
+            <div class="icon-circle"><i class="ri-checkbox-circle-line"></i></div>
+        </div>
+    </div>
+
+    <!-- Sering Periksa List -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="ri-pulse-line"></i> Sering Periksa</div>
+            <select class="select-date"><option>September</option></select>
+        </div>
+        
+        <div class="list-item">
+            <div class="item-left">
+                <div class="item-icon icon-red"><i class="ri-heart-pulse-fill"></i></div>
+                <div class="item-details">
+                    <h4>Akmal fikriansyah</h4>
+                    <p>🏠 09dm | 👤 Ustd ibar</p>
+                </div>
+            </div>
+            <span class="badge-count bg-red">5x</span>
+        </div>
+
+        <div class="list-item">
+            <div class="item-left">
+                <div class="item-icon icon-yellow"><i class="ri-capsule-fill"></i></div>
+                <div class="item-details">
+                    <h4>M.jildan paturangga</h4>
+                    <p>🏠 02da | 👤 Ustd depi</p>
+                </div>
+            </div>
+            <span class="badge-count bg-orange">4x</span>
+        </div>
+
+        <div class="list-item">
+            <div class="item-left">
+                <div class="item-icon icon-grey"><i class="ri-thermometer-line"></i></div>
+                <div class="item-details">
+                    <h4>M.rizky afandi</h4>
+                    <p>🏠 01dm | 👤 Ustd sahal</p>
+                </div>
+            </div>
+            <span class="badge-count bg-grey">4x</span>
+        </div>
+    </div>
+
+    <!-- Script Grafik -->
+    <script>
+        const ctx = document.getElementById('myChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['0', '5', '10'],
+                datasets: [{
+                    label: 'Masuk',
+                    data: [10, 10, 10],
+                    backgroundColor: '#4caf50'
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+</body>
+</html>
